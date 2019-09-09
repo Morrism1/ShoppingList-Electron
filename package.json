@@ -1,0 +1,17 @@
+{
+  "name": "shoppinglist-electron-master",
+  "version": "1.0.0",
+  "description": "ShoppingList Desktop app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "electron"
+  ],
+  "author": "Maurice Murangwa",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^6.0.7"
+  }
+}
