@@ -2,7 +2,10 @@ const electron = require('electron');
 const url = require('url');
 const path = require('path');
 
-const {app,BrowserWindow,Menu} = electron;
+const {app,BrowserWindow,Menu,ipcMain} = electron;
+
+// Set env
+process.env.NODE_ENV = 'production';
 
 let mainWindow;
 let addWindow;
@@ -10,7 +13,10 @@ let addWindow;
 //Listen for app to be ready
 app.on('ready', function(){
     //create new window
-    mainWindow = new BrowserWindow({});
+    mainWindow = new BrowserWindow({
+          webPreferences: {
+        nodeIntegration: true}
+});
     // Load html into window
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname,'mainWindow.html'),
@@ -31,9 +37,13 @@ Menu.setApplicationMenu(mainMenu)
 function createAddWindow(){
      //create new window
      addWindow = new BrowserWindow({
-         width: 300,
+        webPreferences: {
+            nodeIntegration: true
+        },
+        width: 300,
          height: 200,
-         title: 'Add ShoppingList Item'
+         title: 'Add ShoppingList Item',
+         
      });
      // Load html into window
      addWindow.loadURL(url.format({
@@ -46,6 +56,12 @@ addWindow.on('closed',function(){
     addWindow = null;
 });
 }
+// Catch item:add
+ipcMain.on('item:add',function(e,item){
+    mainWindow.webContents.send('item:add',item);
+    addWindow.close();
+})
+
 // Create menu template
 const mainMenuTemplate = [{
     label: 'File',
@@ -56,7 +72,10 @@ const mainMenuTemplate = [{
         }
     },
     {
-        label: 'Clear Item'
+        label: 'Clear Item',
+        click(){
+            mainWindow.webContents.send('item:clear');
+        }
     },
     {
         label: 'Quit',
